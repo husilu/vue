@@ -53,14 +53,17 @@ Vue.prototype.$mount = function (
           }
         }
       } else if (template.nodeType) {
+        // 如果模板是元素，返回元素的innerHtml
         template = template.innerHTML
       } else {
         if (process.env.NODE_ENV !== 'production') {
           warn('invalid template option:' + template, this)
         }
+        // 否则返回当前是实例
         return this
       }
     } else if (el) {
+      // 如果没有template 获取el的 outerHTML 作为模板
       template = getOuterHTML(el)
     }
     if (template) {
@@ -69,6 +72,7 @@ Vue.prototype.$mount = function (
         mark('compile')
       }
 
+      // 把template转换成render函数
       const { render, staticRenderFns } = compileToFunctions(template, {
         outputSourceRange: process.env.NODE_ENV !== 'production',
         shouldDecodeNewlines,
@@ -86,7 +90,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
-  // 调用mount方法，渲染DOM
+  // 调用mount方法，渲染DOM 这里是runtime/index.js里面的mount
   return mount.call(this, el, hydrating)
 }
 

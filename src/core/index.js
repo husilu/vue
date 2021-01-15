@@ -2,7 +2,7 @@ import Vue from './instance/index'
 import { initGlobalAPI } from './global-api/index'
 import { isServerRendering } from 'core/util/env'
 import { FunctionalRenderContext } from 'core/vdom/create-functional-component'
-// 给Vue挂载静态方法
+// 给Vue挂载静态方法 然后就执行Vue的构造函数
 initGlobalAPI(Vue)
 
 Object.defineProperty(Vue.prototype, '$isServer', {

@@ -48,8 +48,9 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
-  if (opts.props) initProps(vm, opts.props)
-  if (opts.methods) initMethods(vm, opts.methods)
+  if (opts.props) initProps(vm, opts.props) // 把props中的成员转换成响应式数据
+  if (opts.methods) initMethods(vm, opts.methods) // 把选项中的methods注入到 Vue实例
+  // 数据的初始化
   if (opts.data) {
     initData(vm)
   } else {
@@ -111,6 +112,8 @@ function initProps (vm: Component, propsOptions: Object) {
 
 function initData (vm: Component) {
   let data = vm.$options.data
+  // 初始化 _data组件中data是函数， 调用函数返回结果
+  // 否则直接返回data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
     : data || {}
@@ -123,10 +126,13 @@ function initData (vm: Component) {
     )
   }
   // proxy data on instance
+  // 获取data中的所有属性
   const keys = Object.keys(data)
+  // 获取props和methods
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  // 判断data中的成员是否和 props/methods重名
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -143,11 +149,13 @@ function initData (vm: Component) {
         `Use prop default value instead.`,
         vm
       )
-    } else if (!isReserved(key)) {
+    }  // 判断属性名称是否以_或者$开头 如果是 则不会注入到vue实例
+     else if (!isReserved(key)) {
       proxy(vm, `_data`, key)
     }
   }
   // observe data
+  // 响应式处理
   observe(data, true /* asRootData */)
 }
 
@@ -263,7 +271,7 @@ function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {
     if (process.env.NODE_ENV !== 'production') {
-      if (typeof methods[key] !== 'function') {
+      if (typeof methods[key] !== 'function') { 
         warn(
           `Method "${key}" has type "${typeof methods[key]}" in the component definition. ` +
           `Did you reference the function correctly?`,

@@ -33,6 +33,7 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 把该组件放到它的父组件的$children数组里面
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
@@ -46,7 +47,7 @@ export function initLifecycle (vm: Component) {
 
   vm.$children = []
   vm.$refs = {}
-
+  // 下划线开头的成员都是私有成员
   vm._watcher = null
   vm._inactive = null
   vm._directInactive = false
@@ -56,6 +57,8 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  // _update 方法的作用是把VNode 渲染成真实的DOM
+  // 首次渲染会调用，数据更新会调用
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -187,6 +190,7 @@ export function mountComponent (
     }
   } else {
     updateComponent = () => {
+      // _render 是用户传入的render函数 或者是把模板编译成的render函数 作用是生成虚拟dom，_update调用patch函数，对比两个虚拟dom的变化，生成真实dom
       vm._update(vm._render(), hydrating)
     }
   }
@@ -194,6 +198,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // 这里是一个渲染wathcer
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
