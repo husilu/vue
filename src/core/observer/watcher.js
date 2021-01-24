@@ -23,6 +23,7 @@ let uid = 0
  * and fires callback when the expression value changes.
  * This is used for both the $watch() api and directives.
  */
+// watcher 分为3种  Computed Watcher，用户Watcher（监听器），渲染Watcher
 export default class Watcher {
   vm: Component;
   expression: string;

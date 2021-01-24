@@ -78,6 +78,7 @@ if (process.env.NODE_ENV !== 'production') {
   initProxy = function initProxy (vm) {
     if (hasProxy) {
       // determine which proxy handler to use
+      // 如果又proxy对象，会把渲染的代理对象使用proxy实例 否则把renderProxy设置为实例 vue实例
       const options = vm.$options
       const handlers = options.render && options.render._withStripped
         ? getHandler
