@@ -15,53 +15,61 @@ export default class Dep {
   id: number;
   subs: Array<Watcher>;
 
-  constructor () {
+  constructor() {
     this.id = uid++
     this.subs = []
   }
-
-  addSub (sub: Watcher) {
+  // 添加新的订阅者 watcher 对象
+  addSub(sub: Watcher) {
     this.subs.push(sub)
   }
-
-  removeSub (sub: Watcher) {
+  // 移除订阅者
+  removeSub(sub: Watcher) {
     remove(this.subs, sub)
   }
 
-  depend () {
+  // 将观察对象和watcher 建立依赖
+  depend() {
     if (Dep.target) {
+      // 如果target存在 把dep对象添加到watcher的依赖中
       Dep.target.addDep(this)
     }
   }
 
-  notify () {
+  notify() {
     // stabilize the subscriber list first
-    // subs数组中存储的就是watcher对象
-    const subs = this.subs.slice()
+    const subs = this.subs.slice() // subs存储的是watcher，slice是对数组克隆
     if (process.env.NODE_ENV !== 'production' && !config.async) {
       // subs aren't sorted in scheduler if not running async
       // we need to sort them now to make sure they fire in correct
       // order
       subs.sort((a, b) => a.id - b.id)
     }
+    // 调用每个订阅者的update方法实现更新
     for (let i = 0, l = subs.length; i < l; i++) {
       subs[i].update()
     }
   }
 }
 
+// Dep.target 用来存放目前正在使用的watcher
+// 全局唯一，并且一次也只能有一个watcher被使用
 // The current target watcher being evaluated.
 // This is globally unique because only one watcher
 // can be evaluated at a time.
 Dep.target = null
 const targetStack = []
 
-export function pushTarget (target: ?Watcher) {
+// 入栈并将当前 watcher 赋值给Dep.target 
+// 父子组件嵌套的时候 先把父组件对应watcher入栈
+// 再去处理子组件的watcher，子组件处理完毕之后，再把父组件对应的watcher出栈，继续操作
+export function pushTarget(target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target
 }
 
-export function popTarget () {
+export function popTarget() {
+  // 出栈操作
   targetStack.pop()
   Dep.target = targetStack[targetStack.length - 1]
 }
