@@ -190,7 +190,6 @@ export function mountComponent(
     }
   } else {
     updateComponent = () => {
-      // vue的实例方法一般都是在 init这个方法里面实现的
       // _render 是用户传入的render函数 或者是把模板编译成的render函数 作用是生成虚拟dom，_update调用patch函数，对比两个虚拟dom的变化，生成真实dom
       vm._update(vm._render(), hydrating)
     }

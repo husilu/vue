@@ -44,7 +44,7 @@ export function generate (
   ast: ASTElement | void,
   options: CompilerOptions
 ): CodegenResult {
-  const state = new CodegenState(options)
+  const state = new CodegenState(options) // 代码生成过程中使用的状态对象
   const code = ast ? genElement(ast, state) : '_c("div")'
   return {
     render: `with(this){return ${code}}`,
@@ -77,6 +77,8 @@ export function genElement (el: ASTElement, state: CodegenState): string {
     } else {
       let data
       if (!el.plain || (el.pre && state.maybeComponent(el))) {
+        // 生成元素的属性/指令/事件等
+        // 处理各种指令,包括genDirectives(model/text/html)
         data = genData(el, state)
       }
 
@@ -97,7 +99,7 @@ export function genElement (el: ASTElement, state: CodegenState): string {
 
 // hoist static sub-trees out
 function genStatic (el: ASTElement, state: CodegenState): string {
-  el.staticProcessed = true
+  el.staticProcessed = true // 当前节点已经被处理过了
   // Some elements (templates) need to behave differently inside of a v-pre
   // node.  All pre nodes are static roots, so we can use this as a location to
   // wrap a state change and reset it upon exiting the pre node.
@@ -534,7 +536,7 @@ function genNode (node: ASTNode, state: CodegenState): string {
 
 export function genText (text: ASTText | ASTExpression): string {
   return `_v(${text.type === 2
-    ? text.expression // no need for () because already wrapped in _s()
+    ? text.expression // no need for () because already wrapped in _s() 字符串加上引号 hello -> "hello"
     : transformSpecialNewlines(JSON.stringify(text.text))
   })`
 }

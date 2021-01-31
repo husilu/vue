@@ -14,7 +14,7 @@ export const createCompiler = createCompilerCreator(function baseCompile(
 ): CompiledResult {
   // 1把模板转换成 ast 抽象语法树
   // 抽象语法树，用来以树形的方式描述代码结构
-  const ast = parse(template.trim(), options)
+  const ast = parse(template.trim(), options) // options 合并后的选项
   if (options.optimize !== false) {
     // 2优化抽象语法树
     optimize(ast, options)
