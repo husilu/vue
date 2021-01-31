@@ -60,7 +60,7 @@ export default class Watcher {
     if (options) {
       this.deep = !!options.deep
       this.user = !!options.user
-      this.lazy = !!options.lazy
+      this.lazy = !!options.lazy // 计算属性的lazy为true 数据变化之后才会去更新视图
       this.sync = !!options.sync
       this.before = options.before
     } else {
@@ -103,7 +103,7 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get() {
-    pushTarget(this)
+    pushTarget(this) // 把当前的watcher对象存入到栈里面
     let value
     const vm = this.vm
     try {
