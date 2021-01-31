@@ -600,7 +600,7 @@ export function createPatchFunction(backend) {
 
     // 新节点没有文本
     if (isUndef(vnode.text)) {
-      // 老节点和老节点都有有子节点
+      // 老节点和新节点都有有子节点
       // 对子节点进行diff操作，调用updateChildren
       if (isDef(oldCh) && isDef(ch)) {
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)

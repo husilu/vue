@@ -29,6 +29,7 @@ export function initGlobalAPI(Vue: GlobalAPI) {
       )
     }
   }
+  // 初始化Vue.config 对象
   Object.defineProperty(Vue, 'config', configDef)
 
   // exposed util methods.

@@ -4,13 +4,15 @@ import { extend } from 'shared/util'
 import { detectErrors } from './error-detector'
 import { createCompileToFunctionFn } from './to-function'
 
-export function createCompilerCreator (baseCompile: Function): Function {
-  return function createCompiler (baseOptions: CompilerOptions) {
-    function compile (
-      template: string,
-      options?: CompilerOptions
+export function createCompilerCreator(baseCompile: Function): Function {
+  // baseOptions 平台相关的options
+  // src\platforms\web\compiler\options.js 中定义
+  return function createCompiler(baseOptions: CompilerOptions) {
+    function compile(
+      template: string, // 模版
+      options?: CompilerOptions // 用户传入的选项   把用户传入的选项和平带自带的选项合并过后传给baseCompile
     ): CompiledResult {
-      const finalOptions = Object.create(baseOptions)
+      const finalOptions = Object.create(baseOptions) // 合并baseOptions和CompilerOptions 
       const errors = []
       const tips = []
 
@@ -58,7 +60,7 @@ export function createCompilerCreator (baseCompile: Function): Function {
 
       finalOptions.warn = warn
 
-      const compiled = baseCompile(template.trim(), finalOptions)
+      const compiled = baseCompile(template.trim(), finalOptions) // 模板编译的核心元素
       if (process.env.NODE_ENV !== 'production') {
         detectErrors(compiled.ast, warn)
       }
@@ -69,7 +71,7 @@ export function createCompilerCreator (baseCompile: Function): Function {
 
     return {
       compile,
-      compileToFunctions: createCompileToFunctionFn(compile)
+      compileToFunctions: createCompileToFunctionFn(compile) // 模版编译的入口
     }
   }
 }
