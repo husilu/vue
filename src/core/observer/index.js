@@ -37,7 +37,7 @@ export function toggleObserving(value: boolean) {
 export class Observer {
   // 观测对象
   value: any;
-  // 依赖对象
+  // 依赖对象  每一个Observer里面都有一个 dep 属性
   dep: Dep;
   // 实例计数器
   vmCount: number; // number of vms that have this object as root $data
@@ -153,10 +153,11 @@ export function defineReactive(
   customSetter?: ?Function,
   shallow?: boolean // 是否浅监听
 ) {
-  // 创建依赖对象实例
+  // 创建依赖对象实例 负责为当前这个属性收集依赖 也就是收集当前这个属性的所有watcher 这里是给属性创建dep对象负责收集每一个属性的依赖  Observer里面是给对象创建Dep为对象收集依赖（比如对象添加成员和删除成员的时候触发视图更新 比如$set 和 $delete）
   const dep = new Dep()
   // 获取 obj 的属性描述符对象
   const property = Object.getOwnPropertyDescriptor(obj, key)
+  // 获取属性是否可以配置 如果不可以配置则直接返回
   if (property && property.configurable === false) {
     return
   }
@@ -168,20 +169,21 @@ export function defineReactive(
     val = obj[key]
   }
   // 判断是否递归观察子对象，并将子对象属性都转换成 getter/setter， 返回子观察对象
+  // 是否进行深层监听
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
     enumerable: true,
     configurable: true,
     get: function reactiveGetter() {
       // 如果预定义的getter存在则value等于 getter调用的返回值
-      // 否则直接赋予属性值
+      // 否则直接赋予属性值  这里有个疑问 它不会无限进入getter方法吗？？
       const value = getter ? getter.call(obj) : val
+      // Dep.target是在watcher的get()方法中赋值的其实就是watcher对象 watcher的get方法每次访问属性的时候都会被执行
       // 如果存在当前依赖目标，即watcher对象 则建立依赖 
-      // Dep.target是在watcher的get()方法中赋值的 watcher的get方法每次访问属性的时候都会被执行
       if (Dep.target) {
-        // depend 把当前dep对象存到watcher对象的集合中，把watcher对象添加到dep的subs数组中
+        // depend 把当前dep对象存到watcher对象的集合中，把watcher对象添加到dep的subs数组中 将来数据发生变化的时候 去通知所有的watcher更新数据
         dep.depend()
-        // 如果子观察目标存在，建立子对象的依赖关系
+        // 如果子观察目标存在，建立子对象的依赖关系 
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
@@ -197,7 +199,7 @@ export function defineReactive(
       // 如果预定义的 getter 存在则 value等于 getter 调用的返回值
       // 否则直接赋予属性值
       const value = getter ? getter.call(obj) : val
-      // 如果新值等于旧值或者新值为NaN则不执行
+      // 如果新值等于旧值或者新值为NaN则不执行 值没有发生变化 不需要发送通知
       /* eslint-disable no-self-compare */
       if (newVal === value || (newVal !== newVal && value !== value)) {
         return

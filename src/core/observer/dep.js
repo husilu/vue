@@ -31,7 +31,7 @@ export default class Dep {
   // 将观察对象和watcher 建立依赖
   depend() {
     if (Dep.target) {
-      // 如果target存在 把dep对象添加到watcher的依赖中
+      // 如果target存在 把dep对象添加到watcher的依赖中 this 就是dep
       Dep.target.addDep(this)
     }
   }
@@ -63,6 +63,7 @@ const targetStack = []
 // 入栈并将当前 watcher 赋值给Dep.target 
 // 父子组件嵌套的时候 先把父组件对应watcher入栈
 // 再去处理子组件的watcher，子组件处理完毕之后，再把父组件对应的watcher出栈，继续操作
+// vue2.0之后每一个组件对应一个watcher ？ 为什么？不是说每一个属性对应一个watcher吗  懵逼
 export function pushTarget(target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target

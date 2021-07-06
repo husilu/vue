@@ -78,10 +78,11 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
+    // 渲染wathcer的时候 传入的expOrFn 也就是updatecomponent
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
-      // expOrfn 是字符串的时候 例如 watch：{ 'person.name': function... }
+      // expOrfn 是字符串的时候也就是监听器用户wathcer的时候 例如 watch：{ 'person.name': function... }
       // parsePath('person.name') 返回一个函数获取person.name的值
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
@@ -101,9 +102,10 @@ export default class Watcher {
 
   /**
    * Evaluate the getter, and re-collect dependencies.
+   * 每次访问属性的时候都会被执行 首次渲染会触发 数据变化的时候会触发
    */
   get() {
-    pushTarget(this) // 把当前的watcher对象存入到栈里面
+    pushTarget(this) // 把当前的watcher对象存入到栈里面 给Dep.target赋值
     let value
     const vm = this.vm
     try {
@@ -135,6 +137,7 @@ export default class Watcher {
       this.newDepIds.add(id)
       this.newDeps.push(dep)
       if (!this.depIds.has(id)) {
+        // 如果这个dep的id不存在 则 在dep中添加这个wathcer实例
         dep.addSub(this)
       }
     }
@@ -172,6 +175,7 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
+      // 渲染wathcer执行这里
       queueWatcher(this)
     }
   }
@@ -183,6 +187,7 @@ export default class Watcher {
   run() {
     if (this.active) {
       const value = this.get()
+      // 如果是用户watcher会继续往下面执行
       if (
         value !== this.value ||
         // Deep watchers and watchers on Object/Arrays should fire even

@@ -189,6 +189,7 @@ export function mountComponent(
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // 这里面创建虚拟dom 然后把虚拟dom转换成真实dom
     updateComponent = () => {
       // _render 是用户传入的render函数 或者是把模板编译成的render函数 作用是生成虚拟dom，_update调用patch函数，对比两个虚拟dom的变化，生成真实dom
       vm._update(vm._render(), hydrating)
@@ -199,6 +200,7 @@ export function mountComponent(
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
   // 这里是一个渲染wathcer
+  // 把updateComponent传入渲染Wathcer 在渲染Wathcer的get方法中就会调用updateComponent
   new Watcher(vm, updateComponent, noop, {
     before() {
       if (vm._isMounted && !vm._isDestroyed) {
