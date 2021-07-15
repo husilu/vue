@@ -46,7 +46,7 @@ export default class Watcher {
   constructor(
     vm: Component,
     expOrFn: string | Function,
-    cb: Function,
+    cb: Function, // 用户wathcer的话会传入一个回调 得到新旧两个值
     options?: ?Object,
     isRenderWatcher?: boolean
   ) {
@@ -85,7 +85,7 @@ export default class Watcher {
     } else {
       // expOrfn 是字符串的时候也就是监听器用户wathcer的时候 例如 watch：{ 'person.name': function... }
       // parsePath('person.name') 返回一个函数获取person.name的值
-      this.getter = parsePath(expOrFn)
+      this.getter = parsePath(expOrFn) // 此时的getter是一个函数 这个函数用来返回expOrFn那个属性的值 触发这个属性的getter 但是这里并没有执行 
       if (!this.getter) {
         this.getter = noop
         process.env.NODE_ENV !== 'production' && warn(
@@ -96,7 +96,7 @@ export default class Watcher {
         )
       }
     }
-    // 如果不延迟执行的话 会直接执行get()方法
+    // 如果不延迟执行的话 会直接执行get()方法 比如：渲染watcher
     this.value = this.lazy
       ? undefined
       : this.get()
@@ -170,6 +170,7 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
+  // 数据发生改变的时候执行
   update() {
     /* istanbul ignore else */
     if (this.lazy) {
@@ -177,7 +178,7 @@ export default class Watcher {
     } else if (this.sync) {
       this.run()
     } else {
-      // 渲染wathcer执行这里
+      // 数据发生变化的时候渲染watcher
       queueWatcher(this)
     }
   }
@@ -186,8 +187,10 @@ export default class Watcher {
    * Scheduler job interface.
    * Will be called by the scheduler.
    */
+  // 更新数据到页面上
   run() {
     if (this.active) {
+      // 如果是渲染函数 this.get()就是updateComponent 是没有返回值的 value = undefined
       const value = this.get()
       // 如果是用户watcher会继续往下面执行
       if (

@@ -90,12 +90,13 @@ function flushSchedulerQueue () {
   // as we run existing watchers
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index]
-    // 只有渲染watcher才会有的
+    // 只有渲染watcher才会有的 用来触发钩子函数 beforeupdate
     if (watcher.before) {
       watcher.before()
     }
     id = watcher.id
     has[id] = null
+    // 数据改变的时候最终渲染watcher调用run方法
     watcher.run()
     // in dev build, check and stop circular updates.
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
@@ -165,10 +166,12 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+// 
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
     has[id] = true
+    // flushing 正在刷新
     if (!flushing) {
       queue.push(watcher)
     } else {
