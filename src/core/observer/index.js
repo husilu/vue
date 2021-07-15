@@ -181,7 +181,7 @@ export function defineReactive(
       // Dep.target是在watcher的get()方法中赋值的其实就是watcher对象 watcher的get方法每次访问属性的时候都会被执行
       // 如果存在当前依赖目标，即watcher对象 则建立依赖 
       if (Dep.target) {
-        // depend 把当前dep对象存到watcher对象的集合中，把watcher对象添加到dep的subs数组中 将来数据发生变化的时候 去通知所有的watcher更新数据
+        // depend 把当前dep对象存到watcher对象的集合中，把watcher对象添加到dep的subs数组中 将来数据发生变化的时候 去通知所有的watcher调用get方法更新数据
         dep.depend()
         // 如果子观察目标存在，建立子对象的依赖关系 
         if (childOb) {
@@ -219,7 +219,7 @@ export function defineReactive(
       }
       // 如果新值是对象，观察子对象并返回子的observer对象
       childOb = !shallow && observe(newVal)
-      // 派发更新（发布更改通知）
+      // 派发更新（发布更改通知）触发dep 通知subs数组里面的watcher去更新
       dep.notify()
     }
   })

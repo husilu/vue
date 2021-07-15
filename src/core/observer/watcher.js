@@ -60,7 +60,8 @@ export default class Watcher {
     if (options) {
       this.deep = !!options.deep
       this.user = !!options.user
-      this.lazy = !!options.lazy // 计算属性的lazy为true 数据变化之后才会去更新视图
+      // 计算属性的lazy为true 数据变化之后才会去更新视图
+      this.lazy = !!options.lazy
       this.sync = !!options.sync
       this.before = options.before
     } else {
@@ -95,6 +96,7 @@ export default class Watcher {
         )
       }
     }
+    // 如果不延迟执行的话 会直接执行get()方法
     this.value = this.lazy
       ? undefined
       : this.get()
@@ -102,14 +104,14 @@ export default class Watcher {
 
   /**
    * Evaluate the getter, and re-collect dependencies.
-   * 每次访问属性的时候都会被执行 首次渲染会触发 数据变化的时候会触发
+   * 每次访问属性的时候都会被执行 Watcher创建的时候就会调用get() 首次渲染会触发 数据变化的时候会触发
    */
   get() {
-    pushTarget(this) // 把当前的watcher对象存入到栈里面 给Dep.target赋值
+    pushTarget(this) // 把当前的watcher对象存入到栈里面 给Dep.target赋值 先把父组件的watcher保存起来
     let value
     const vm = this.vm
     try {
-      value = this.getter.call(vm, vm) // 如果是渲染watcher 这里执行的就是updateComponent
+      value = this.getter.call(vm, vm) // 如果是渲染watcher 这里的getter执行的就是updateComponent
     } catch (e) {
       if (this.user) {
         handleError(e, vm, `getter for watcher "${this.expression}"`)

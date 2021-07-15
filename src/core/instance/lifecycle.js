@@ -169,6 +169,7 @@ export function mountComponent(
   }
   callHook(vm, 'beforeMount')
 
+  // 其实就是挂载 这里面执行 _update 把虚拟dom转换成真实dom
   let updateComponent
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -191,7 +192,10 @@ export function mountComponent(
   } else {
     // 这里面创建虚拟dom 然后把虚拟dom转换成真实dom
     updateComponent = () => {
-      // _render 是用户传入的render函数 或者是把模板编译成的render函数 作用是生成虚拟dom，_update调用patch函数，对比两个虚拟dom的变化，生成真实dom
+
+      // _render 是用户传入的render函数 或者是把模板编译成的render函数 作用是生成虚拟dom
+      // _update: 调用__patch__ 对比新旧VNode，把VNode转成真实DOM
+      // 对比两个虚拟dom的变化，生成真实dom，在watcher的get里面会调用这个方法
       vm._update(vm._render(), hydrating)
     }
   }
