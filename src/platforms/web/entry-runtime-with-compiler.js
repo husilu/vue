@@ -14,6 +14,7 @@ const idToTemplate = cached(id => {
   return el && el.innerHTML
 })
 // 保留Vue实例的$mount方法
+// 改写$mount 方法 使之可以把template转成render
 const mount = Vue.prototype.$mount
 Vue.prototype.$mount = function (
   el?: string | Element,

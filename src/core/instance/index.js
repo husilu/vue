@@ -15,8 +15,8 @@ function Vue (options) {
   // 调用 _init() 方法
   this._init(options)
 }
-
-// 注册vm的init()方法， 初始化vm
+// 给vue原型挂载了很多成员
+// 注册vm的init()方法
 initMixin(Vue)
 // 注册vm的$data/$props/$set/$delete/$watch
 stateMixin(Vue)
@@ -26,8 +26,8 @@ eventsMixin(Vue)
 // 初始化生命周期相关的混入方法
 // _update/$forceUpdate/$destory
 lifecycleMixin(Vue)
-// 混入render
-// $nextTick/_render
+// 混入render  定义render函数中的_o _s _l 等方法
+// 定义$nextTick/_render等方法
 renderMixin(Vue)
 
 export default Vue

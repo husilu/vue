@@ -42,6 +42,7 @@ let timerFunc
 if (typeof Promise !== 'undefined' && isNative(Promise)) {
   const p = Promise.resolve()
   timerFunc = () => {
+    // 微任务的时候处理flushCallbacks
     p.then(flushCallbacks)
     // In problematic UIWebViews, Promise.then doesn't completely break, but
     // it can get stuck in a weird state where callbacks are pushed into the
@@ -51,6 +52,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     if (isIOS) setTimeout(noop)
   }
   isUsingMicroTask = true
+  // MutationObserver 监听DOM对象的改变
 } else if (!isIE && typeof MutationObserver !== 'undefined' && (
   isNative(MutationObserver) ||
   // PhantomJS and iOS 7.x
@@ -86,6 +88,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  // 把 cb 加上异常处理存入 callbacks数组中
   callbacks.push(() => {
     if (cb) {
       try {
@@ -99,6 +102,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
   })
   if (!pending) {
     pending = true
+    // 遍历callbacks数组 找到数组中的所有回调 依次进行调用
     timerFunc()
   }
   // $flow-disable-line

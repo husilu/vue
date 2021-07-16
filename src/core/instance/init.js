@@ -35,6 +35,7 @@ export function initMixin (Vue: Class<Component>) {
     // merge options
     // 合并options
     if (options && options._isComponent) {
+      // 如果当前的Vue实例是组件，通过mergeOptions来合并options选项
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.

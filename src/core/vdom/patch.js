@@ -476,7 +476,7 @@ export function createPatchFunction(backend) {
         // 以上4种情况都不满足
         // newStartVnode 依次和旧的节点比较
 
-        // 从新的节点开头获取一个，去老节点中查找相同节点
+        // 从新的节点开头获取一个，去老节点中查找相同节点 
         // 先找新开始节点的key和老节点相同的索引，如果没找到再通过sameVnode找
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
         idxInOld = isDef(newStartVnode.key)
@@ -776,16 +776,16 @@ export function createPatchFunction(backend) {
       // 创建新的VNode 这里并没有挂载 而是存在了内存中
       createElm(vnode, insertedVnodeQueue)
     } else {
-      // 新的和老的VNode都存在，更新
+      // 新的和老的VNode都存在，更新 首次渲染 oldVnode是真实DOM元素
       const isRealElement = isDef(oldVnode.nodeType)
-      // 判断参数1是否是真实DOM，不是真实DOM
+      // 判断参数1是否是真实DOM，不是真实DOM 并且是否是sameVnode key和tag是否相同
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
         // 更新操作，diff算法
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
         // 第一个参数是真实DOM，创建VNode
-        // 初始化
+        // 初始化 首次渲染的时候
         if (isRealElement) {
           // mounting to a real element
           // check if this is server-rendered content and if we can perform
@@ -814,8 +814,9 @@ export function createPatchFunction(backend) {
           oldVnode = emptyNodeAt(oldVnode)
         }
 
-        // replacing existing element
+        // replacing existing element 获取到老Vnode的DOM元素 
         const oldElm = oldVnode.elm
+        // 获取到该DOM元素的父节点 之后好把对应的VNode挂载到父节点上
         const parentElm = nodeOps.parentNode(oldElm)
 
         // create new node
