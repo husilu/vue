@@ -504,6 +504,7 @@ export function createPatchFunction(backend) {
         newStartVnode = newCh[++newStartIdx]
       }
     }
+    // 比较完毕之后
     // 当结束时 oldStartIdx > oldEndIdx 旧节点遍历完， 但是新节点还没有
     if (oldStartIdx > oldEndIdx) {
       // 说明新节点比老节点多，把剩下的新节点插入到老的节点后面
@@ -541,6 +542,7 @@ export function createPatchFunction(backend) {
     }
   }
 
+  // 当新老节点都有子节点的时候，并且子节点是sameVnode时候 会调用patchVnode
   function patchVnode(
     oldVnode,
     vnode,
@@ -781,7 +783,7 @@ export function createPatchFunction(backend) {
       // 判断参数1是否是真实DOM，不是真实DOM 并且是否是sameVnode key和tag是否相同
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node
-        // 更新操作，diff算法
+        // 更新操作，diff算法 updateChildren
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
         // 第一个参数是真实DOM，创建VNode
